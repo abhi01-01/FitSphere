@@ -31,6 +31,7 @@ FitSphere aims to help users track their fitness journey through a modular, prod
 
 ## Project Structure
 
+```
 The repository contains multiple service modules under one workspace: 
 ├── activityservice
 ├── aiservice
@@ -40,6 +41,7 @@ The repository contains multiple service modules under one workspace:
 ├── gateway
 ├── userservice
 └── Readme.md
+```
 
 Each folder represents a distinct microservice or module:
 	•	activityservice: Tracks workout activities
@@ -149,7 +151,7 @@ http://localhost:3000
 
 Once everything is running:
 
-1. Access the frontend UI at the port configured (http://localhost:3000 by default).
+1. Access the frontend UI at the port configured (http://localhost:5173 by default).
 
 2. The frontend will call backend APIs routed through the gateway.
 
