@@ -1,0 +1,29 @@
+name: eureka
+
+on:
+  push:
+    paths:
+      - "eureka/**"
+      - ".github/workflows/eureka.yml"
+  pull_request:
+    paths:
+      - "eureka/**"
+      - ".github/workflows/eureka.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: eureka
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - run: chmod +x mvnw
+      - run: ./mvnw test

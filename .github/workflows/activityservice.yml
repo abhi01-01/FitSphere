@@ -1,0 +1,29 @@
+name: activityservice
+
+on:
+  push:
+    paths:
+      - "activityservice/**"
+      - ".github/workflows/activityservice.yml"
+  pull_request:
+    paths:
+      - "activityservice/**"
+      - ".github/workflows/activityservice.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: activityservice
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - run: chmod +x mvnw
+      - run: ./mvnw test

@@ -1,0 +1,29 @@
+spring:
+  config:
+    import: ""
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+    gateway:
+      routes:
+        - id: user-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/users/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://example.com/.well-known/jwks.json
+
+app:
+  security:
+    allowed-origins: http://localhost:5173
+    internal-token: fitsphere-test-internal-token
+    require-https: false
+
+eureka:
+  client:
+    enabled: false

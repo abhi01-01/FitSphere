@@ -1,0 +1,29 @@
+name: aiservice
+
+on:
+  push:
+    paths:
+      - "aiservice/**"
+      - ".github/workflows/aiservice.yml"
+  pull_request:
+    paths:
+      - "aiservice/**"
+      - ".github/workflows/aiservice.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: aiservice
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - run: chmod +x mvnw
+      - run: ./mvnw test

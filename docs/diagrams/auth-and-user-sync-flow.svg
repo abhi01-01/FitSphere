@@ -1,0 +1,108 @@
+<svg width="1600" height="760" viewBox="0 0 1600 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="authBg" x1="0" y1="0" x2="1600" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8F7FB"/>
+      <stop offset="1" stop-color="#EFF3F1"/>
+    </linearGradient>
+    <filter id="authShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <marker id="authArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#475569" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </marker>
+    <style>
+      .title { font: 700 32px Inter, Arial, sans-serif; fill: #11211B; }
+      .subtitle { font: 500 16px Inter, Arial, sans-serif; fill: #5B6B63; }
+      .lane { fill: #FFFFFF; stroke: #D8E1DC; stroke-width: 1.5; }
+      .laneTitle { font: 700 18px Inter, Arial, sans-serif; fill: #173C30; }
+      .stepTitle { font: 700 18px Inter, Arial, sans-serif; fill: #13221B; }
+      .stepBody { font: 500 14px Inter, Arial, sans-serif; fill: #576760; }
+      .stepNum { font: 700 14px Inter, Arial, sans-serif; fill: #FFFFFF; }
+      .line { stroke: #475569; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#authArrow); }
+      .lineSoft { stroke: #94A3B8; stroke-width: 1.8; stroke-dasharray: 7 7; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#authArrow); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="760" fill="url(#authBg)"/>
+  <text x="80" y="80" class="title">Authentication and User Sync Flow</text>
+  <text x="80" y="110" class="subtitle">The frontend authenticates with Keycloak using OAuth2 PKCE. The gateway then ensures the JWT subject exists in the user service before routing business requests.</text>
+
+  <rect x="70" y="160" width="220" height="520" rx="28" class="lane"/>
+  <rect x="310" y="160" width="240" height="520" rx="28" class="lane"/>
+  <rect x="570" y="160" width="240" height="520" rx="28" class="lane"/>
+  <rect x="830" y="160" width="240" height="520" rx="28" class="lane"/>
+  <rect x="1090" y="160" width="240" height="520" rx="28" class="lane"/>
+
+  <text x="137" y="210" class="laneTitle">Browser User</text>
+  <text x="377" y="210" class="laneTitle">Frontend</text>
+  <text x="644" y="210" class="laneTitle">Keycloak</text>
+  <text x="906" y="210" class="laneTitle">Gateway</text>
+  <text x="1147" y="210" class="laneTitle">User Service</text>
+
+  <rect x="105" y="250" width="150" height="88" rx="22" fill="#FFF8EE" stroke="#F1D1B2" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="130" cy="275" r="15" fill="#206A4B"/><text x="124.5" y="280.5" class="stepNum">1</text>
+  <text x="155" y="278" class="stepTitle">Open app</text>
+  <text x="155" y="302" class="stepBody">Unauthenticated user</text>
+  <text x="155" y="321" class="stepBody">lands on the SPA</text>
+
+  <rect x="345" y="250" width="170" height="96" rx="22" fill="#F0F7F3" stroke="#BCD6C8" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="370" cy="275" r="15" fill="#206A4B"/><text x="364.5" y="280.5" class="stepNum">2</text>
+  <text x="395" y="278" class="stepTitle">Start PKCE login</text>
+  <text x="395" y="302" class="stepBody">Frontend redirects with</text>
+  <text x="395" y="321" class="stepBody">code challenge and prompt=login</text>
+
+  <rect x="605" y="250" width="170" height="114" rx="22" fill="#F7F4FF" stroke="#D7CCF2" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="630" cy="275" r="15" fill="#206A4B"/><text x="624.5" y="280.5" class="stepNum">3</text>
+  <text x="655" y="278" class="stepTitle">Authenticate user</text>
+  <text x="655" y="302" class="stepBody">Login or signup happens</text>
+  <text x="655" y="321" class="stepBody">in Keycloak, then the user</text>
+  <text x="655" y="340" class="stepBody">is redirected back with a code</text>
+
+  <rect x="345" y="410" width="170" height="114" rx="22" fill="#F0F7F3" stroke="#BCD6C8" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="370" cy="435" r="15" fill="#206A4B"/><text x="364.5" y="440.5" class="stepNum">4</text>
+  <text x="395" y="438" class="stepTitle">Exchange code</text>
+  <text x="395" y="462" class="stepBody">SPA exchanges the auth</text>
+  <text x="395" y="481" class="stepBody">code for access, refresh,</text>
+  <text x="395" y="500" class="stepBody">and ID tokens</text>
+
+  <rect x="865" y="250" width="170" height="114" rx="22" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="890" cy="275" r="15" fill="#206A4B"/><text x="884.5" y="280.5" class="stepNum">5</text>
+  <text x="915" y="278" class="stepTitle">Receive API call</text>
+  <text x="915" y="302" class="stepBody">Gateway validates JWT and</text>
+  <text x="915" y="321" class="stepBody">extracts the Keycloak</text>
+  <text x="915" y="340" class="stepBody">subject from the token</text>
+
+  <rect x="1125" y="250" width="170" height="114" rx="22" fill="#EDF6FF" stroke="#BDD7F0" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="1150" cy="275" r="15" fill="#206A4B"/><text x="1144.5" y="280.5" class="stepNum">6</text>
+  <text x="1175" y="278" class="stepTitle">Validate or register</text>
+  <text x="1175" y="302" class="stepBody">User service confirms the</text>
+  <text x="1175" y="321" class="stepBody">subject exists, or creates</text>
+  <text x="1175" y="340" class="stepBody">the application user record</text>
+
+  <rect x="865" y="470" width="170" height="96" rx="22" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="890" cy="495" r="15" fill="#206A4B"/><text x="884.5" y="500.5" class="stepNum">7</text>
+  <text x="915" y="498" class="stepTitle">Forward request</text>
+  <text x="915" y="522" class="stepBody">Gateway injects X-User-ID</text>
+  <text x="915" y="541" class="stepBody">from JWT subject</text>
+
+  <rect x="345" y="580" width="170" height="68" rx="22" fill="#F0F7F3" stroke="#BCD6C8" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="370" cy="605" r="15" fill="#206A4B"/><text x="364.5" y="610.5" class="stepNum">8</text>
+  <text x="395" y="608" class="stepTitle">Logout</text>
+  <text x="395" y="627" class="stepBody">Frontend clears tokens</text>
+
+  <rect x="605" y="580" width="170" height="68" rx="22" fill="#F7F4FF" stroke="#D7CCF2" stroke-width="1.5" filter="url(#authShadow)"/>
+  <circle cx="630" cy="605" r="15" fill="#206A4B"/><text x="624.5" y="610.5" class="stepNum">9</text>
+  <text x="655" y="608" class="stepTitle">OIDC logout</text>
+  <text x="655" y="627" class="stepBody">Keycloak session ends</text>
+
+  <path d="M255 294H345" class="line"/>
+  <path d="M515 294H605" class="line"/>
+  <path d="M690 364V410H515" class="line"/>
+  <path d="M515 458H605" class="lineSoft"/>
+  <path d="M515 458H865V306" class="line"/>
+  <path d="M1035 306H1125" class="line"/>
+  <path d="M1210 364V470H1035" class="line"/>
+  <path d="M515 614H605" class="line"/>
+
+  <text x="800" y="706" class="stepBody" text-anchor="middle">Only the gateway is allowed to decide the effective user id for downstream requests.</text>
+</svg>

@@ -22,7 +22,20 @@ public class ActivityAIService {
 
     public Recommendation generateRecommendation(Activity activity) {
         String prompt = createPromptForActivity(activity);
-        String aiResponse = geminiService.getAnswer(prompt);
+        String aiResponse;
+        try {
+            aiResponse = geminiService.getAnswer(prompt);
+        } catch (GeminiServiceException e) {
+            log.warn("Unable to call Gemini for activity {}. reason=\"{}\". Falling back to default recommendation.",
+                    activity.getId(),
+                    e.getMessage());
+            return createDefaultRecommendation(activity);
+        } catch (Exception e) {
+            log.warn("Unexpected Gemini failure for activity {}. Falling back to default recommendation.",
+                    activity.getId(),
+                    e);
+            return createDefaultRecommendation(activity);
+        }
         log.info("RESPONSE FROM AI: {} ", aiResponse);
         return processAiResponse(activity, aiResponse);
     }
@@ -71,7 +84,9 @@ public class ActivityAIService {
                     .build();
             
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Unable to parse Gemini response for activity {}. Falling back to default recommendation. reason=\"{}\"",
+                    activity.getId(),
+                    e.getMessage());
             return createDefaultRecommendation(activity);
         }
     }

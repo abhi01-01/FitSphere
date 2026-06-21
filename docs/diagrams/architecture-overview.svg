@@ -1,0 +1,178 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5F7F8"/>
+      <stop offset="1" stop-color="#EEF3F1"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#475569" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </marker>
+    <style>
+      .title { font: 700 32px Inter, Arial, sans-serif; fill: #11211B; }
+      .subtitle { font: 500 16px Inter, Arial, sans-serif; fill: #5B6B63; }
+      .lane { fill: #FFFFFF; stroke: #D8E1DC; stroke-width: 1.5; }
+      .laneTitle { font: 700 18px Inter, Arial, sans-serif; fill: #173C30; }
+      .cardTitle { font: 700 20px Inter, Arial, sans-serif; fill: #13221B; }
+      .cardMeta { font: 600 13px Inter, Arial, sans-serif; fill: #206A4B; letter-spacing: 0.2px; }
+      .cardBody { font: 500 14px Inter, Arial, sans-serif; fill: #56655E; }
+      .label { font: 600 13px Inter, Arial, sans-serif; fill: #516159; }
+      .small { font: 500 12px Inter, Arial, sans-serif; fill: #64748B; }
+      .line { stroke: #475569; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); }
+      .lineSoft { stroke: #94A3B8; stroke-width: 1.8; stroke-dasharray: 7 7; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <text x="80" y="80" class="title">FitSphere Architecture Overview</text>
+  <text x="80" y="110" class="subtitle">Client traffic enters through the gateway, activity processing is asynchronous, and each bounded context owns its own storage.</text>
+
+  <rect x="70" y="150" width="460" height="660" rx="28" class="lane"/>
+  <text x="105" y="198" class="laneTitle">Experience and Identity</text>
+
+  <rect x="110" y="235" width="170" height="110" rx="22" fill="#FFF8EE" stroke="#F1D1B2" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="138" y="280" class="cardTitle">Browser User</text>
+  <text x="138" y="306" class="cardBody">Signs in, logs workouts,</text>
+  <text x="138" y="326" class="cardBody">and views AI guidance.</text>
+
+  <rect x="320" y="235" width="170" height="110" rx="22" fill="#F0F7F3" stroke="#BCD6C8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="350" y="272" class="cardMeta">REACT + VITE</text>
+  <text x="350" y="300" class="cardTitle">Frontend</text>
+  <text x="350" y="324" class="cardBody">OAuth PKCE client,</text>
+  <text x="350" y="344" class="cardBody">activity dashboard UI.</text>
+
+  <rect x="210" y="420" width="190" height="122" rx="22" fill="#F7F4FF" stroke="#D7CCF2" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="240" y="457" class="cardMeta">KEYCLOAK</text>
+  <text x="240" y="486" class="cardTitle">Identity Provider</text>
+  <text x="240" y="510" class="cardBody">Issues JWTs for the SPA</text>
+  <text x="240" y="530" class="cardBody">and exposes JWK metadata.</text>
+
+  <rect x="560" y="150" width="490" height="660" rx="28" class="lane"/>
+  <text x="595" y="198" class="laneTitle">Platform Services</text>
+
+  <rect x="610" y="235" width="185" height="118" rx="22" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="640" y="272" class="cardMeta">SPRING CLOUD GATEWAY</text>
+  <text x="640" y="300" class="cardTitle">API Gateway</text>
+  <text x="640" y="324" class="cardBody">JWT validation, CORS,</text>
+  <text x="640" y="344" class="cardBody">routing, and user sync.</text>
+
+  <rect x="840" y="235" width="165" height="118" rx="22" fill="#F8FAFB" stroke="#CCD7D1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="868" y="272" class="cardMeta">SPRING CLOUD</text>
+  <text x="868" y="300" class="cardTitle">Config Server</text>
+  <text x="868" y="324" class="cardBody">Serves runtime config</text>
+  <text x="868" y="344" class="cardBody">from classpath files.</text>
+
+  <rect x="610" y="410" width="165" height="118" rx="22" fill="#F8FAFB" stroke="#CCD7D1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="639" y="447" class="cardMeta">NETFLIX OSS</text>
+  <text x="639" y="475" class="cardTitle">Eureka</text>
+  <text x="639" y="499" class="cardBody">Registry for gateway</text>
+  <text x="639" y="519" class="cardBody">and business services.</text>
+
+  <rect x="820" y="410" width="175" height="118" rx="22" fill="#EDF6FF" stroke="#BDD7F0" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="850" y="447" class="cardMeta">SPRING BOOT</text>
+  <text x="850" y="475" class="cardTitle">User Service</text>
+  <text x="850" y="499" class="cardBody">Registers and validates</text>
+  <text x="850" y="519" class="cardBody">users by Keycloak subject.</text>
+
+  <rect x="610" y="590" width="175" height="118" rx="22" fill="#EDF6FF" stroke="#BDD7F0" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="640" y="627" class="cardMeta">SPRING BOOT</text>
+  <text x="640" y="655" class="cardTitle">Activity Service</text>
+  <text x="640" y="679" class="cardBody">Stores workouts and emits</text>
+  <text x="640" y="699" class="cardBody">events for AI processing.</text>
+
+  <rect x="820" y="590" width="175" height="118" rx="22" fill="#FFF6F1" stroke="#F0C8B4" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="850" y="627" class="cardMeta">SPRING BOOT + GEMINI</text>
+  <text x="850" y="655" class="cardTitle">AI Service</text>
+  <text x="850" y="679" class="cardBody">Builds recommendations</text>
+  <text x="850" y="699" class="cardBody">from workout events.</text>
+
+  <rect x="1080" y="150" width="450" height="660" rx="28" class="lane"/>
+  <text x="1115" y="198" class="laneTitle">Data and External Dependencies</text>
+
+  <rect x="1120" y="245" width="160" height="104" rx="22" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1150" y="281" class="cardMeta">POSTGRESQL</text>
+  <text x="1150" y="309" class="cardTitle">Users DB</text>
+  <text x="1150" y="333" class="cardBody">System of record for</text>
+  <text x="1150" y="353" class="cardBody">application users.</text>
+
+  <rect x="1120" y="400" width="160" height="104" rx="22" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1150" y="436" class="cardMeta">MONGODB</text>
+  <text x="1150" y="464" class="cardTitle">Activity DB</text>
+  <text x="1150" y="488" class="cardBody">Workout history and</text>
+  <text x="1150" y="508" class="cardBody">activity metadata.</text>
+
+  <rect x="1120" y="555" width="160" height="104" rx="22" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1150" y="591" class="cardMeta">RABBITMQ</text>
+  <text x="1150" y="619" class="cardTitle">Event Broker</text>
+  <text x="1150" y="643" class="cardBody">Queues activity events</text>
+  <text x="1150" y="663" class="cardBody">for async AI handling.</text>
+
+  <rect x="1335" y="400" width="160" height="104" rx="22" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1365" y="436" class="cardMeta">MONGODB</text>
+  <text x="1365" y="464" class="cardTitle">AI DB</text>
+  <text x="1365" y="488" class="cardBody">Stores generated</text>
+  <text x="1365" y="508" class="cardBody">recommendations.</text>
+
+  <rect x="1335" y="555" width="160" height="104" rx="22" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="1365" y="591" class="cardMeta">EXTERNAL API</text>
+  <text x="1365" y="619" class="cardTitle">Gemini</text>
+  <text x="1365" y="643" class="cardBody">LLM endpoint used to</text>
+  <text x="1365" y="663" class="cardBody">generate coaching output.</text>
+
+  <path d="M280 290H320" class="line"/>
+  <text x="286" y="276" class="label">uses</text>
+
+  <path d="M305 345V420" class="line"/>
+  <text x="318" y="392" class="label">signs in with</text>
+
+  <path d="M490 290H610" class="line"/>
+  <text x="520" y="276" class="label">API calls</text>
+
+  <path d="M400 470H610" class="lineSoft"/>
+  <text x="466" y="454" class="label">JWTs validated by</text>
+
+  <path d="M702 353V410" class="lineSoft"/>
+  <text x="720" y="390" class="label">registers with</text>
+
+  <path d="M915 353V410" class="lineSoft"/>
+  <text x="934" y="390" class="label">reads config from</text>
+
+  <path d="M795 285H840" class="lineSoft"/>
+  <text x="797" y="268" class="small">runtime config</text>
+
+  <path d="M795 300C870 300 790 469 820 469" class="line"/>
+  <text x="790" y="438" class="label">routes /api/users</text>
+
+  <path d="M702 528V590" class="lineSoft"/>
+  <text x="722" y="565" class="label">registers with</text>
+
+  <path d="M907 528V590" class="lineSoft"/>
+  <text x="927" y="565" class="label">registers with</text>
+
+  <path d="M795 320C870 320 760 649 610 649" class="line"/>
+  <text x="760" y="615" class="label">routes /api/activities</text>
+
+  <path d="M795 335C920 335 770 649 820 649" class="line"/>
+  <text x="850" y="615" class="label">routes /api/recommendations</text>
+
+  <path d="M995 470H1120" class="line"/>
+  <text x="1015" y="454" class="label">read/write</text>
+
+  <path d="M785 649H1120" class="line"/>
+  <text x="910" y="633" class="label">store activities</text>
+
+  <path d="M785 680H1120V607" class="line"/>
+  <text x="905" y="719" class="label">publish activity events</text>
+
+  <path d="M1280 607H1335V649" class="line"/>
+  <text x="1295" y="592" class="label">consume + process</text>
+
+  <path d="M995 649H1335" class="line"/>
+  <text x="1126" y="633" class="label">store recommendations</text>
+
+  <path d="M995 680H1335V607" class="line"/>
+  <text x="1095" y="719" class="label">prompt model</text>
+</svg>

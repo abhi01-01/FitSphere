@@ -3,6 +3,9 @@ package com.fitness.activityservice.service;
 import com.fitness.activityservice.ActivityRepository;
 import com.fitness.activityservice.dto.ActivityRequest;
 import com.fitness.activityservice.dto.ActivityResponse;
+import com.fitness.activityservice.error.BadRequestException;
+import com.fitness.activityservice.error.ForbiddenException;
+import com.fitness.activityservice.error.NotFoundException;
 import com.fitness.activityservice.model.Activity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ActivityService {
+    private static final String ADMIN_ROLE = "FIT_ADMIN";
 
     private final ActivityRepository activityRepository;
     private final UserValidationService userValidationService;
@@ -32,7 +36,7 @@ public class ActivityService {
 
         boolean isValidUser = userValidationService.validateUser(request.getUserId());
         if (!isValidUser) {
-            throw new RuntimeException("Invalid User: " + request.getUserId());
+            throw new BadRequestException("Invalid user: " + request.getUserId());
         }
 
         Activity activity = Activity.builder()
@@ -45,6 +49,10 @@ public class ActivityService {
                 .build();
 
         Activity savedActivity = activityRepository.save(activity);
+        log.info("audit_event=activity_created keycloak_id={} activity_id={} type={}",
+                savedActivity.getUserId(),
+                savedActivity.getId(),
+                savedActivity.getType());
 
         // Publish to RabbitMQ for AI Processing
         try {
@@ -71,15 +79,29 @@ public class ActivityService {
     }
 
     public List<ActivityResponse> getUserActivities(String userId) {
+        log.info("audit_event=activity_list_read keycloak_id={}", userId);
         List<Activity> activities = activityRepository.findByUserId(userId);
         return activities.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
-    public ActivityResponse getActivityById(String activityId) {
-        return activityRepository.findById(activityId)
-                .map(this::mapToResponse)
-                .orElseThrow(() -> new RuntimeException("Activity not found with id: " + activityId));
+    public ActivityResponse getActivityById(String activityId, String callerUserId, String callerRoles) {
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new NotFoundException("Activity not found with id: " + activityId));
+
+        if (!isAdmin(callerRoles) && !callerUserId.equals(activity.getUserId())) {
+            throw new ForbiddenException("You are not allowed to access this activity");
+        }
+
+        log.info("audit_event=activity_read keycloak_id={} activity_id={}", callerUserId, activityId);
+        return mapToResponse(activity);
+    }
+
+    private boolean isAdmin(String callerRoles) {
+        return callerRoles != null
+                && java.util.Arrays.stream(callerRoles.split(","))
+                .map(String::trim)
+                .anyMatch(ADMIN_ROLE::equals);
     }
 }

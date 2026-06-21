@@ -1,0 +1,48 @@
+spring:
+  config:
+    import: ""
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/fitSphereAiServiceTest
+      database: fitSphereAiServiceTest
+  rabbitmq:
+    dynamic: false
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        auto-startup: false
+
+rabbitmq:
+  exchange:
+    name: fitness.exchange
+  queue:
+    name: activity.queue
+  routing:
+    key: activity.tracking
+  dead-letter:
+    exchange: fitness.exchange.dlx
+    queue: activity.queue.dlq
+    routing-key: activity.dead-letter
+  listener:
+    max-attempts: 3
+    concurrency: 1
+    max-concurrency: 2
+    prefetch: 5
+
+gemini:
+  api:
+    base-url: http://localhost
+    key: test-key
+    model: gemini-2.5-flash
+
+eureka:
+  client:
+    enabled: false

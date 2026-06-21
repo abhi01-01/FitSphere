@@ -1,0 +1,47 @@
+{
+  "realm": "fitSphere-auth",
+  "enabled": true,
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "defaultRoles": [
+    "FIT_USER"
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "FIT_USER",
+        "description": "Default application user role"
+      },
+      {
+        "name": "FIT_ADMIN",
+        "description": "Administrative application role"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "oauth2-pkce-client",
+      "name": "FitSphere Frontend",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "http://localhost:3000"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      }
+    }
+  ]
+}

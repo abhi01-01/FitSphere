@@ -19,9 +19,21 @@ public class RabbitMqConfig {
     @Value("${rabbitmq.routing.key}")
     private String routingKey;
 
+    @Value("${rabbitmq.dead-letter.exchange}")
+    private String deadLetterExchange;
+
+    @Value("${rabbitmq.dead-letter.queue}")
+    private String deadLetterQueue;
+
+    @Value("${rabbitmq.dead-letter.routing-key}")
+    private String deadLetterRoutingKey;
+
     @Bean
     public Queue activityQueue() {
-        return new Queue(queue, true);
+        return QueueBuilder.durable(queue)
+                .deadLetterExchange(deadLetterExchange)
+                .deadLetterRoutingKey(deadLetterRoutingKey)
+                .build();
     }
 
     @Bean
@@ -30,8 +42,23 @@ public class RabbitMqConfig {
     }
 
     @Bean
+    public DirectExchange activityDeadLetterExchange() {
+        return new DirectExchange(deadLetterExchange);
+    }
+
+    @Bean
     public Binding activityBinding(Queue activityQueue, DirectExchange activityExchange) {
         return BindingBuilder.bind(activityQueue).to(activityExchange).with(routingKey);
+    }
+
+    @Bean
+    public Queue activityDeadLetterQueue() {
+        return QueueBuilder.durable(deadLetterQueue).build();
+    }
+
+    @Bean
+    public Binding activityDeadLetterBinding(Queue activityDeadLetterQueue, DirectExchange activityDeadLetterExchange) {
+        return BindingBuilder.bind(activityDeadLetterQueue).to(activityDeadLetterExchange).with(deadLetterRoutingKey);
     }
 
     @Bean

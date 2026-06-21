@@ -1,0 +1,29 @@
+name: userservice
+
+on:
+  push:
+    paths:
+      - "userservice/**"
+      - ".github/workflows/userservice.yml"
+  pull_request:
+    paths:
+      - "userservice/**"
+      - ".github/workflows/userservice.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: userservice
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - run: chmod +x mvnw
+      - run: ./mvnw test

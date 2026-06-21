@@ -1,0 +1,37 @@
+spring:
+  config:
+    import: ""
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/fitSphereActivityTest
+      database: fitSphereActivityTest
+  rabbitmq:
+    dynamic: false
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        auto-startup: false
+
+rabbitmq:
+  exchange:
+    name: fitness.exchange
+  queue:
+    name: activity.queue
+  routing:
+    key: activity.tracking
+  dead-letter:
+    exchange: fitness.exchange.dlx
+    queue: activity.queue.dlq
+    routing-key: activity.dead-letter
+
+eureka:
+  client:
+    enabled: false

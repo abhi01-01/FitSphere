@@ -1,74 +1,210 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
-import { getActivityDetail } from '../services/api';
-import { Box, Card, CardContent, Divider, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Divider,
+  Skeleton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { getActivityDetail } from "../services/api";
+
+const formatActivityType = (type) =>
+  type
+    ?.toLowerCase()
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase()) || "Unspecified";
+
+const RecommendationSection = ({ title, items }) => (
+  <Box
+    sx={{
+      border: "1px solid",
+      borderColor: "divider",
+      borderRadius: 2.5,
+      p: 2.5,
+      bgcolor: "rgba(255,255,255,0.74)",
+    }}
+  >
+    <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+      {title}
+    </Typography>
+
+    {items?.length ? (
+      <Stack spacing={1.25}>
+        {items.map((item, index) => (
+          <Box
+            key={`${title}-${index}`}
+            sx={{
+              px: 1.5,
+              py: 1.25,
+              borderRadius: 2,
+              bgcolor: "rgba(246,247,248,0.92)",
+            }}
+          >
+            <Typography variant="body2">{item}</Typography>
+          </Box>
+        ))}
+      </Stack>
+    ) : (
+      <Typography variant="body2" color="text.secondary">
+        No items available.
+      </Typography>
+    )}
+  </Box>
+);
 
 const ActivityDetail = () => {
   const { id } = useParams();
-  const [activity, setActivity] = useState(null);
+  const navigate = useNavigate();
   const [recommendation, setRecommendation] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchActivityDetail = async () => {
+      setLoading(true);
+      setError("");
+
       try {
         const response = await getActivityDetail(id);
-        setActivity(response.data);
-        setRecommendation(response.data.recommendation);
-      } catch (error) {
-        console.error(error);
+        setRecommendation(response.data);
+      } catch (requestError) {
+        console.error(requestError);
+        if (requestError.response?.status === 404) {
+          setError(
+            "No recommendation is available for this workout yet. The activity may still be processing."
+          );
+        } else {
+          setError("Unable to load this recommendation right now.");
+        }
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
     fetchActivityDetail();
   }, [id]);
 
-  if (!activity) {
-    return <Typography>Loading...</Typography>
+  if (loading) {
+    return (
+      <Stack spacing={2}>
+        <Skeleton variant="rounded" height={156} />
+        <Skeleton variant="rounded" height={220} />
+        <Skeleton variant="rounded" height={220} />
+      </Stack>
+    );
   }
+
+  if (error) {
+    return (
+      <Box
+        sx={{
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: 3,
+          p: { xs: 2.5, md: 3 },
+          bgcolor: "rgba(255,255,255,0.82)",
+        }}
+      >
+        <Stack spacing={2}>
+          <Button
+            variant="text"
+            sx={{ alignSelf: "flex-start", px: 0 }}
+            onClick={() => navigate("/activities")}
+          >
+            Back to activities
+          </Button>
+          <Alert severity="info">{error}</Alert>
+        </Stack>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
-            <Card sx={{ mb: 2 }}>
-                <CardContent>
-                    <Typography variant="h5" gutterBottom>Activity Details</Typography>
-                    <Typography>Type: {activity.type}</Typography>
-                    <Typography>Duration: {activity.duration} minutes</Typography>
-                    <Typography>Calories Burned: {activity.caloriesBurned}</Typography>
-                    <Typography>Date: {new Date(activity.createdAt).toLocaleString()}</Typography>
-                </CardContent>
-            </Card>
+    <Stack spacing={3}>
+      <Button
+        variant="text"
+        sx={{ alignSelf: "flex-start", px: 0 }}
+        onClick={() => navigate("/activities")}
+      >
+        Back to activities
+      </Button>
 
-            {recommendation && (
-                <Card>
-                    <CardContent>
-                        <Typography variant="h5" gutterBottom>AI Recommendation</Typography>
-                        <Typography variant="h6">Analysis</Typography>
-                        <Typography paragraph>{activity.recommendation}</Typography>
-                        
-                        <Divider sx={{ my: 2 }} />
-                        
-                        <Typography variant="h6">Improvements</Typography>
-                        {activity?.improvements?.map((improvement, index) => (
-                            <Typography key={index} paragraph>• {activity.improvements}</Typography>
-                        ))}
-                        
-                        <Divider sx={{ my: 2 }} />
-                        
-                        <Typography variant="h6">Suggestions</Typography>
-                        {activity?.suggestions?.map((suggestion, index) => (
-                            <Typography key={index} paragraph>• {suggestion}</Typography>
-                        ))}
-                        
-                        <Divider sx={{ my: 2 }} />
-                        
-                        <Typography variant="h6">Safety Guidelines</Typography>
-                        {activity?.safety?.map((safety, index) => (
-                            <Typography key={index} paragraph>• {safety}</Typography>
-                        ))}
-                    </CardContent>
-                </Card>
-            )}
-        </Box>
-  )
-}
+      <Box
+        sx={{
+          border: "1px solid",
+          borderColor: "divider",
+          borderRadius: 3,
+          p: { xs: 2.5, md: 3 },
+          bgcolor: "rgba(255,255,255,0.82)",
+        }}
+      >
+        <Stack spacing={2.5}>
+          <Box>
+            <Stack direction="row" spacing={1} sx={{ mb: 1.5, flexWrap: "wrap" }}>
+              <Chip
+                label={formatActivityType(recommendation.activityType)}
+                color="primary"
+                sx={{ borderRadius: 1.5 }}
+              />
+              <Chip
+                label={new Date(recommendation.createdAt).toLocaleString()}
+                variant="outlined"
+                sx={{ borderRadius: 1.5 }}
+              />
+            </Stack>
+            <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+              Recommendation details
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Workout ID: {recommendation.activityId}
+            </Typography>
+          </Box>
 
-export default ActivityDetail
+          <Divider />
+
+          <Box
+            sx={{
+              borderRadius: 2.5,
+              p: 2.5,
+              bgcolor: "rgba(240,245,242,0.85)",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.25 }}>
+              Analysis
+            </Typography>
+            <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
+              {recommendation.recommendation}
+            </Typography>
+          </Box>
+        </Stack>
+      </Box>
+
+      <Box
+        sx={{
+          display: "grid",
+          gap: 2,
+          gridTemplateColumns: { xs: "1fr", lg: "repeat(3, minmax(0, 1fr))" },
+        }}
+      >
+        <RecommendationSection
+          title="Improvements"
+          items={recommendation.improvements}
+        />
+        <RecommendationSection
+          title="Suggestions"
+          items={recommendation.suggestions}
+        />
+        <RecommendationSection
+          title="Safety guidelines"
+          items={recommendation.safety}
+        />
+      </Box>
+    </Stack>
+  );
+};
+
+export default ActivityDetail;

@@ -17,8 +17,11 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponse> getUserProfile(@PathVariable String userId){
-        return ResponseEntity.ok(userService.getUserProfile(userId));
+    public ResponseEntity<UserResponse> getUserProfile(
+            @PathVariable String userId,
+            @RequestHeader("X-User-ID") String callerUserId,
+            @RequestHeader(value = "X-User-Roles", required = false) String callerRoles){
+        return ResponseEntity.ok(userService.getUserProfile(userId, callerUserId, callerRoles));
     }
 
     @PostMapping("/register")

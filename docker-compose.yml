@@ -1,0 +1,205 @@
+name: fitsphere
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fitsphere-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-fitSphere}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-fitSphere}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mongodb:
+    image: mongo:7
+    container_name: fitsphere-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: fitsphere-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    container_name: fitsphere-keycloak
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    ports:
+      - "8181:8080"
+    volumes:
+      - ./infra/keycloak:/opt/keycloak/data/import:ro
+
+  eureka:
+    build:
+      context: ./eureka
+    container_name: fitsphere-eureka
+    ports:
+      - "8761:8761"
+    depends_on:
+      - keycloak
+
+  configserver:
+    build:
+      context: ./configserver
+    container_name: fitsphere-configserver
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka
+
+  userservice:
+    build:
+      context: ./userservice
+    container_name: fitsphere-userservice
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://configserver:8888
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://eureka:8761/eureka/
+      USER_SERVICE_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-fitSphere}
+      USER_SERVICE_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      USER_SERVICE_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:-fitsphere-internal-dev-token}
+      JPA_DDL_AUTO: update
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+      eureka:
+        condition: service_started
+
+  activityservice:
+    build:
+      context: ./activityservice
+    container_name: fitsphere-activityservice
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://configserver:8888
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://eureka:8761/eureka/
+      ACTIVITY_MONGODB_URI: mongodb://mongodb:27017/fitSphereActivity
+      ACTIVITY_MONGODB_DATABASE: fitSphereActivity
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS:-guest}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:-fitsphere-internal-dev-token}
+    ports:
+      - "8082:8082"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+      eureka:
+        condition: service_started
+
+  aiservice:
+    build:
+      context: ./aiservice
+    container_name: fitsphere-aiservice
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://configserver:8888
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://eureka:8761/eureka/
+      AI_MONGODB_URI: mongodb://mongodb:27017/fitSphereAiService
+      AI_MONGODB_DATABASE: fitSphereAiService
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER:-guest}
+      RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS:-guest}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      GEMINI_RESPONSE_TIMEOUT: ${GEMINI_RESPONSE_TIMEOUT:-60s}
+      GEMINI_READ_TIMEOUT: ${GEMINI_READ_TIMEOUT:-60s}
+      GEMINI_REQUEST_TIMEOUT: ${GEMINI_REQUEST_TIMEOUT:-60s}
+      GEMINI_RETRIES: ${GEMINI_RETRIES:-1}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:-fitsphere-internal-dev-token}
+    ports:
+      - "8083:8083"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+      eureka:
+        condition: service_started
+
+  gateway:
+    build:
+      context: ./gateway
+    container_name: fitsphere-gateway
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://configserver:8888
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://eureka:8761/eureka/
+      KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/${KEYCLOAK_REALM:-fitSphere-auth}/protocol/openid-connect/certs
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:3000}
+      INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:-fitsphere-internal-dev-token}
+      GATEWAY_REQUIRE_HTTPS: ${GATEWAY_REQUIRE_HTTPS:-false}
+    ports:
+      - "8080:8080"
+    depends_on:
+      userservice:
+        condition: service_started
+      activityservice:
+        condition: service_started
+      aiservice:
+        condition: service_started
+      keycloak:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./fitness-app-frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8080/api
+        VITE_KEYCLOAK_BASE_URL: http://localhost:8181
+        VITE_KEYCLOAK_REALM: ${KEYCLOAK_REALM:-fitSphere-auth}
+        VITE_KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-oauth2-pkce-client}
+        VITE_APP_URL: http://localhost:3000
+    container_name: fitsphere-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      gateway:
+        condition: service_started
+      keycloak:
+        condition: service_started
+
+volumes:
+  postgres-data:
+  mongo-data:
+  rabbitmq-data:

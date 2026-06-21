@@ -3,26 +3,62 @@ spring:
     name: activity-service
   data:
     mongodb:
-      uri: mongodb://localhost:27017/fitnessactivity
-      database: fitnessactivity
+      uri: ${ACTIVITY_MONGODB_URI:mongodb://localhost:27017/fitSphereActivity}
+      database: ${ACTIVITY_MONGODB_DATABASE:fitSphereActivity}
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
 
 server:
-  port: 8082
+  port: ${ACTIVITY_SERVICE_PORT:8082}
 
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE:http://localhost:8761/eureka/}
 
 rabbitmq:
   exchange:
-    name: fitness.exchange
+    name: ${FITNESS_RABBITMQ_EXCHANGE:fitness.exchange}
   queue:
-    name: activity.queue
+    name: ${FITNESS_ACTIVITY_QUEUE:activity.queue}
   routing:
-    key: activity.tracking
+    key: ${FITNESS_ACTIVITY_ROUTING_KEY:activity.tracking}
+  dead-letter:
+    exchange: ${FITNESS_ACTIVITY_DLX:fitness.exchange.dlx}
+    queue: ${FITNESS_ACTIVITY_DLQ:activity.queue.dlq}
+    routing-key: ${FITNESS_ACTIVITY_DLQ_ROUTING_KEY:activity.dead-letter}
+
+client:
+  user-service:
+    base-url: ${USER_SERVICE_BASE_URL:http://USER-SERVICE}
+    connect-timeout: ${USER_SERVICE_CONNECT_TIMEOUT:2s}
+    response-timeout: ${USER_SERVICE_RESPONSE_TIMEOUT:3s}
+    read-timeout: ${USER_SERVICE_READ_TIMEOUT:3s}
+    write-timeout: ${USER_SERVICE_WRITE_TIMEOUT:3s}
+    request-timeout: ${USER_SERVICE_REQUEST_TIMEOUT:4s}
+    retries: ${USER_SERVICE_RETRIES:2}
+    retry-backoff: ${USER_SERVICE_RETRY_BACKOFF:200ms}
+
+app:
+  internal:
+    token: ${INTERNAL_SERVICE_TOKEN:fitsphere-internal-dev-token}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    level: "%5p [corr=%X{correlationId:-}]"

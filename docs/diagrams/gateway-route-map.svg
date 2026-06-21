@@ -1,0 +1,119 @@
+<svg width="2200" height="1500" viewBox="0 0 2200 1500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rBg" x1="0" y1="0" x2="2200" y2="1500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F8FA"/>
+      <stop offset="1" stop-color="#EEF3F1"/>
+    </linearGradient>
+    <filter id="rShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <marker id="rArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2 2L10 6L2 10" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </marker>
+    <style>
+      .title { font: 700 44px Inter, Arial, sans-serif; fill: #11211B; }
+      .subtitle { font: 500 20px Inter, Arial, sans-serif; fill: #5B6B63; }
+      .panel { fill: #FFFFFF; stroke: #D8E1DC; stroke-width: 1.5; }
+      .panelTitle { font: 700 24px Inter, Arial, sans-serif; fill: #173C30; }
+      .route { font: 700 18px Inter, Arial, sans-serif; fill: #13221B; }
+      .body { font: 500 16px Inter, Arial, sans-serif; fill: #56655E; }
+      .meta { font: 600 14px Inter, Arial, sans-serif; fill: #206A4B; }
+      .line { stroke: #475569; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#rArrow); }
+    </style>
+  </defs>
+
+  <rect width="2200" height="1500" fill="url(#rBg)"/>
+  <text x="90" y="96" class="title">Gateway Route Map</text>
+  <text x="90" y="132" class="subtitle">Low-level route ownership from the browser-facing gateway paths to the controller methods and storage domains behind them.</text>
+
+  <rect x="90" y="210" width="420" height="1180" rx="34" class="panel"/>
+  <text x="140" y="268" class="panelTitle">Gateway Paths</text>
+
+  <rect x="140" y="340" width="320" height="150" rx="24" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="172" y="392" class="route">POST /api/users/register</text>
+  <text x="172" y="432" class="body">Sync or create an application user.</text>
+
+  <rect x="140" y="540" width="320" height="170" rx="24" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="172" y="592" class="route">GET /api/users/{userId}</text>
+  <text x="172" y="632" class="body">Read an application user</text>
+  <text x="172" y="660" class="body">by internal id.</text>
+
+  <rect x="140" y="760" width="320" height="170" rx="24" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="172" y="812" class="route">GET /api/users/{userId}/validate</text>
+  <text x="172" y="852" class="body">Check whether a Keycloak</text>
+  <text x="172" y="880" class="body">subject exists in the app.</text>
+
+  <rect x="140" y="980" width="320" height="190" rx="24" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="172" y="1032" class="route">POST /api/activities</text>
+  <text x="172" y="1072" class="body">Create an activity for the</text>
+  <text x="172" y="1100" class="body">authenticated user and</text>
+  <text x="172" y="1128" class="body">publish the event.</text>
+
+  <rect x="570" y="210" width="520" height="1180" rx="34" class="panel"/>
+  <text x="620" y="268" class="panelTitle">Controller Ownership</text>
+
+  <rect x="630" y="340" width="400" height="240" rx="24" fill="#EDF6FF" stroke="#BDD7F0" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="662" y="388" class="meta">userservice / UserController</text>
+  <text x="662" y="430" class="route">register()</text>
+  <text x="662" y="468" class="body">POST /api/users/register</text>
+  <text x="662" y="506" class="route">getUserProfile()</text>
+  <text x="662" y="544" class="body">GET /api/users/{userId}</text>
+
+  <rect x="630" y="650" width="400" height="220" rx="24" fill="#EDF6FF" stroke="#BDD7F0" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="662" y="698" class="meta">userservice / UserController</text>
+  <text x="662" y="740" class="route">validateUser()</text>
+  <text x="662" y="778" class="body">GET /api/users/{userId}/validate</text>
+
+  <rect x="630" y="950" width="400" height="280" rx="24" fill="#EDF6FF" stroke="#BDD7F0" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="662" y="998" class="meta">activityservice / ActivityController</text>
+  <text x="662" y="1040" class="route">trackActivity()</text>
+  <text x="662" y="1078" class="body">POST /api/activities</text>
+  <text x="662" y="1116" class="route">getUserActivities()</text>
+  <text x="662" y="1154" class="body">GET /api/activities</text>
+  <text x="662" y="1192" class="route">getActivity()</text>
+  <text x="662" y="1230" class="body">GET /api/activities/{activityId}</text>
+
+  <rect x="1150" y="210" width="420" height="1180" rx="34" class="panel"/>
+  <text x="1200" y="268" class="panelTitle">Recommendation Routes</text>
+
+  <rect x="1210" y="340" width="300" height="190" rx="24" fill="#FFF6F1" stroke="#F0C8B4" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="1242" y="388" class="meta">aiservice / RecommendationController</text>
+  <text x="1242" y="430" class="route">getUserRecommendation()</text>
+  <text x="1242" y="468" class="body">GET /api/recommendations/user/{userId}</text>
+
+  <rect x="1210" y="590" width="300" height="190" rx="24" fill="#FFF6F1" stroke="#F0C8B4" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="1242" y="638" class="meta">aiservice / RecommendationController</text>
+  <text x="1242" y="680" class="route">getActivityRecommendation()</text>
+  <text x="1242" y="718" class="body">GET /api/recommendations/activity/{activityId}</text>
+
+  <rect x="1630" y="210" width="480" height="1180" rx="34" class="panel"/>
+  <text x="1680" y="268" class="panelTitle">Storage and Side Effects</text>
+
+  <rect x="1690" y="340" width="360" height="180" rx="24" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="1722" y="388" class="meta">userservice persistence</text>
+  <text x="1722" y="430" class="route">PostgreSQL users table</text>
+  <text x="1722" y="468" class="body">Stores application users and Keycloak subject mappings.</text>
+
+  <rect x="1690" y="610" width="360" height="220" rx="24" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="1722" y="658" class="meta">activityservice persistence</text>
+  <text x="1722" y="700" class="route">MongoDB activities</text>
+  <text x="1722" y="738" class="body">Stores workout records.</text>
+  <text x="1722" y="776" class="body">Also publishes events to RabbitMQ.</text>
+
+  <rect x="1690" y="920" width="360" height="230" rx="24" fill="#FFFFFF" stroke="#CCD7D1" stroke-width="1.5" filter="url(#rShadow)"/>
+  <text x="1722" y="968" class="meta">aiservice persistence</text>
+  <text x="1722" y="1010" class="route">MongoDB recommendations</text>
+  <text x="1722" y="1048" class="body">Stores AI output per activity.</text>
+  <text x="1722" y="1086" class="body">Generated asynchronously through</text>
+  <text x="1722" y="1114" class="body">RabbitMQ + Gemini.</text>
+
+  <path d="M460 415H630" class="line"/>
+  <path d="M460 625H630V470" class="line"/>
+  <path d="M460 845H630V760" class="line"/>
+  <path d="M460 1075H630" class="line"/>
+  <path d="M1030 430H1690" class="line"/>
+  <path d="M1030 760H1690" class="line"/>
+  <path d="M1030 1090H1690" class="line"/>
+  <path d="M90 1280H1150V430" stroke="#94A3B8" stroke-width="2" stroke-dasharray="8 8" marker-end="url(#rArrow)"/>
+  <text x="116" y="1254" class="body">Gateway also routes GET /api/recommendations/* to the AI service.</text>
+</svg>
